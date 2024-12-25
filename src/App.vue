@@ -1,24 +1,34 @@
 <script setup>
-import {ref} from 'vue'
+import {ref, computed} from 'vue'
 
 const header = ref('Shopping List App')
+const characterCount = computed(() => {
+    return newItem.value.length
+})
 const editing = ref(false)
 const items = ref([
-    {id: 1, label: "10 party hats"},
-    {id: 2, label: "2 board games"},
-    {id: 3, label: "20 cups"}
+    {id: 1, label: "10 party hats", purchased: true, HighPriority: true},
+    {id: 2, label: "2 board games", purchased: true, HighPriority: false},
+    {id: 3, label: "20 cups", purchased: false, HighPriority: true},
 ])
 const newItem = ref("")
 const newItemHighPriority = ref(false)
 
 const saveItem = () => {
-    items.value.push({id: items.value.length + 1, label: newItem.value});
+    items.value.push({id: items.value.length + 1, label: newItem.value, HighPriority: newItemHighPriority.value});
     newItem.value = "";
+    newItemHighPriority.value = false;
 }
 
 const doEdit = (e) => {
     editing.value = e;
     newItem.value = ""
+    newItemHighPriority.value = false;
+
+}
+
+const togglpurchased = (item) => {
+    item.purchased = !item.purchased
 }
 </script>
 
@@ -42,9 +52,14 @@ const doEdit = (e) => {
             Save Item
         </button>
     </form>
+    <p class="counter">
+        {{characterCount}}/200
+    </p>
     <ul>
-        <li v-for="({ id, label }, index) in items" :key="id">
-            {{ label }}
+        <li v-for="(item, index) in items" :key="item.id"
+            @click="togglpurchased(item)"
+            :class="[{strikeout:item.purchased , priority:item.HighPriority}]">
+            {{ item.label }}
         </li>
     </ul>
     <p v-if="!items.length">There is no items!</p>

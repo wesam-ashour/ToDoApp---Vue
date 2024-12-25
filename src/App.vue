@@ -20,6 +20,10 @@ const saveItem = () => {
     newItemHighPriority.value = false;
 }
 
+const deleteItem = (id) => {
+    items.value = items.value.filter(item => item.id !== id);
+};
+
 const doEdit = (e) => {
     editing.value = e;
     newItem.value = ""
@@ -60,6 +64,8 @@ const togglpurchased = (item) => {
             @click="togglpurchased(item)"
             :class="[{strikeout:item.purchased , priority:item.HighPriority}]">
             {{ item.label }}
+            <button @click="deleteItem(item.id)">delete</button>
+
         </li>
     </ul>
     <p v-if="!items.length">There is no items!</p>
